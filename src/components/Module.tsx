@@ -15,18 +15,14 @@ interface ModuleProps {
 export function Module({ title, amountOfLessons, moduleIndex }: ModuleProps) {
   const dispatch = useDispatch();
 
-  const { currentModuleIndex, currentLessonIndex } = useAppSelector(
-    ({ player }) => {
-      return player;
-    }
-  );
+  const { currentModuleIndex, currentLessonIndex } = useAppSelector(({ player }) => {
+    return player;
+  });
 
-  const lessons = useAppSelector(
-    (state) => state.player.course.modules[moduleIndex].lessons
-  );
+  const lessons = useAppSelector((state) => state.player.course.modules[moduleIndex].lessons);
 
   return (
-    <Collapsible.Root className="group">
+    <Collapsible.Root className="group" defaultOpen={moduleIndex === 0}>
       <Collapsible.Trigger className="flex w-full items-center gap-3 bg-zinc-800 p-4">
         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-950 text-xs">
           {moduleIndex + 1}
@@ -44,8 +40,7 @@ export function Module({ title, amountOfLessons, moduleIndex }: ModuleProps) {
         <nav className="relative flex flex-col gap-4 p-6">
           {lessons.map((lesson, lessonIndex) => {
             const isCurrent =
-              currentModuleIndex === moduleIndex &&
-              currentLessonIndex === lessonIndex;
+              currentModuleIndex === moduleIndex && currentLessonIndex === lessonIndex;
 
             return (
               <Lesson
