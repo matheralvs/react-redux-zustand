@@ -5,21 +5,21 @@ import { MessageCircle } from "lucide-react";
 import { Header } from "../components/Header";
 import { Video } from "../components/Video";
 import { Module } from "../components/Module";
-
-import { useAppDispatch, useAppSelector } from "../store";
-import { loadCourses, useCurrentLesson } from "../store/slices/player";
+import { useCurrentLesson, useStore } from "../zustand-store";
 
 export function Player() {
-  const dispatch = useAppDispatch();
-
-  const modules = useAppSelector((state) => state.player.course?.modules);
+  const { course, isLoading, load } = useStore((state) => {
+    return {
+      course: state.course,
+      isLoading: state.isLoading,
+      load: state.load,
+    };
+  });
 
   const { currentLesson } = useCurrentLesson();
 
-  const isCourseLoading = useAppSelector((state) => state.player.isLoading);
-
   useEffect(() => {
-    dispatch(loadCourses());
+    load();
   }, []);
 
   useEffect(() => {
@@ -34,7 +34,7 @@ export function Player() {
         <div className="flex items-center justify-between">
           <Header />
 
-          {isCourseLoading ? (
+          {isLoading ? (
             <div className="h-[36px] w-[158px] animate-pulse rounded-md bg-zinc-900" />
           ) : (
             <button className="flex items-center gap-2 rounded-md bg-violet-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-violet-600">
@@ -45,7 +45,7 @@ export function Player() {
         </div>
 
         <main
-          data-loading={isCourseLoading}
+          data-loading={isLoading}
           className="relative flex overflow-hidden rounded-lg border border-zinc-800 bg-zinc-900 pr-80 shadow data-[loading=true]:animate-pulse"
         >
           <div className="flex-1">
@@ -53,8 +53,8 @@ export function Player() {
           </div>
 
           <aside className="divide-zinc-7 absolute bottom-0 right-0 top-0 w-80 divide-y-2 divide-zinc-900 overflow-y-scroll border-l border-zinc-800 bg-zinc-900 scrollbar-thin scrollbar-track-zinc-950 scrollbar-thumb-violet-500">
-            {modules &&
-              modules.map((module, index) => {
+            {course?.modules &&
+              course?.modules.map((module, index) => {
                 return (
                   <Module
                     key={module.id}
